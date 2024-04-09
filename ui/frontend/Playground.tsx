@@ -77,6 +77,7 @@ const ResizableArea: React.FC = () => {
       }
       { somethingToShow && <div className={styles.output}><Output /></div>}
     </div>
+    
   );
 };
 

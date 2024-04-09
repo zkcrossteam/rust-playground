@@ -3,24 +3,23 @@
 const webpack = require('webpack');
 const HtmlPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const CompressionPlugin = require("compression-webpack-plugin");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CompressionPlugin = require('compression-webpack-plugin');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
+const Dotenv = require('dotenv-webpack');
 const { globSync } = require('glob');
 const basename = require('basename');
 
 const thisPackage = require('./package.json');
 const devDependencies = Object.keys(thisPackage.devDependencies);
 
-const allKeybindingNames =
-      globSync('./node_modules/ace-builds/src-noconflict/keybinding-*.js')
-      .map(basename)
-      .map(n => n.replace(/^keybinding-/, ''));
-const allThemeNames =
-      globSync('./node_modules/ace-builds/src-noconflict/theme-*.js')
-      .map(basename)
-      .filter(n => !n.endsWith('-css'))
-      .map(n => n.replace(/^theme-/, ''));
+const allKeybindingNames = globSync('./node_modules/ace-builds/src-noconflict/keybinding-*.js')
+  .map(basename)
+  .map((n) => n.replace(/^keybinding-/, ''));
+const allThemeNames = globSync('./node_modules/ace-builds/src-noconflict/theme-*.js')
+  .map(basename)
+  .filter((n) => !n.endsWith('-css'))
+  .map((n) => n.replace(/^theme-/, ''));
 
 // There's a builtin/default keybinding that we call `ace`.
 const allKeybindings = allKeybindingNames.concat(['ace']).sort();
@@ -33,25 +32,16 @@ const developmentChunkFilenameTemplate = '[name]-[chunkhash]';
 const productionFilenameTemplate = '[contenthash]';
 const productionChunkFilenameTemplate = '[chunkhash]';
 
-module.exports = function(_, argv) {
+module.exports = function (_, argv) {
   const isProduction = argv.mode === 'production';
-  const filenameTemplate =
-        isProduction ?
-        productionFilenameTemplate :
-        developmentFilenameTemplate;
-  const chunkFilenameTemplate =
-        isProduction ?
-        productionChunkFilenameTemplate :
-        developmentChunkFilenameTemplate;
+  const filenameTemplate = isProduction ? productionFilenameTemplate : developmentFilenameTemplate;
+  const chunkFilenameTemplate = isProduction
+    ? productionChunkFilenameTemplate
+    : developmentChunkFilenameTemplate;
 
-  const devtool =
-        isProduction ?
-        false :
-        'inline-source-map';
+  const devtool = isProduction ? false : 'inline-source-map';
 
-  const localIdentName = isProduction ?
-         "[hash:base64]" :
-         "[path][name]__[local]--[hash:base64]";
+  const localIdentName = isProduction ? '[hash:base64]' : '[path][name]__[local]--[hash:base64]';
 
   return {
     entry: './index.tsx',
@@ -75,6 +65,13 @@ module.exports = function(_, argv) {
 
     resolve: {
       extensions: ['.js', '.jsx', '.ts', '.tsx'],
+      fallback: {
+        path: require.resolve('path-browserify'),
+        os: require.resolve('os-browserify/browser'),
+        crypto: require.resolve('crypto-browserify'),
+        vm: require.resolve("vm-browserify"),
+        stream: require.resolve("stream-browserify")
+      },
     },
 
     module: {
@@ -102,25 +99,21 @@ module.exports = function(_, argv) {
               use: [
                 MiniCssExtractPlugin.loader,
                 {
-                  loader: "css-loader",
+                  loader: 'css-loader',
                   options: {
                     modules: {
                       localIdentName,
                     },
                   },
                 },
-                "postcss-loader",
+                'postcss-loader',
               ],
             },
             {
               include: /node_modules/,
-              use: [
-                MiniCssExtractPlugin.loader,
-                "css-loader",
-                "postcss-loader",
-              ],
+              use: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader'],
             },
-          ]
+          ],
         },
         // This inlines the codicon.ttf file from Monaco. Using a
         // regular file fails because it looks for
@@ -144,14 +137,12 @@ module.exports = function(_, argv) {
         ACE_THEMES: JSON.stringify(allThemes),
       }),
       new HtmlPlugin({
-        title: "Rust Playground",
+        title: 'Rust Playground',
         template: 'index.ejs',
         filename: '../index.html',
       }),
       new CopyPlugin({
-        patterns: [
-          { from: 'robots.txt', to: '..' },
-        ],
+        patterns: [{ from: 'robots.txt', to: '..' }],
       }),
       new MiniCssExtractPlugin({
         filename: `${filenameTemplate}.css`,
@@ -161,12 +152,13 @@ module.exports = function(_, argv) {
         filename: `${filenameTemplate}.worker.js`,
         languages: [],
       }),
+      new Dotenv(),
       ...(isProduction ? [new CompressionPlugin()] : []),
     ],
 
     optimization: {
       splitChunks: {
-        chunks: "all",
+        chunks: 'all',
       },
     },
   };

@@ -1,30 +1,29 @@
+import { MetaMaskProvider } from '@metamask/sdk-react';
+
 import 'core-js';
-
-import 'normalize.css/normalize.css';
-import './index.module.css';
-
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { v4 } from 'uuid';
 
-import {
-  reExecuteWithBacktrace,
-} from './actions';
-import { configureRustErrors } from './highlighting';
 import PageSwitcher from './PageSwitcher';
+import Router from './Router';
+import { reExecuteWithBacktrace } from './actions';
+import configureStore from './configureStore';
+import { configureRustErrors } from './highlighting';
 import playgroundApp from './reducers';
+import { browserWidthChanged } from './reducers/browser';
 import { clientSetIdentifiers } from './reducers/client';
+import { addImport, editCode, enableFeatureGate } from './reducers/code';
+import { performCratesLoad } from './reducers/crates';
 import { featureFlagsForceDisableAll, featureFlagsForceEnableAll } from './reducers/featureFlags';
 import { disableSyncChangesToStorage, override } from './reducers/globalConfiguration';
-import Router from './Router';
-import configureStore from './configureStore';
-import { performVersionsLoad } from './reducers/versions';
-import { performCratesLoad } from './reducers/crates';
 import { gotoPosition } from './reducers/position';
-import { addImport, editCode, enableFeatureGate } from './reducers/code';
-import { browserWidthChanged } from './reducers/browser';
 import { selectText } from './reducers/selection';
+import { performVersionsLoad } from './reducers/versions';
+
+import './index.module.css';
+import 'normalize.css/normalize.css';
 
 const store = configureStore(window);
 
@@ -35,7 +34,7 @@ if (store.getState().client.id === '') {
 
   const rawValue = new Uint32Array(1);
   crypto.getRandomValues(rawValue);
-  const featureFlagThreshold = rawValue[0] / 0xFFFF_FFFF;
+  const featureFlagThreshold = rawValue[0] / 0xffff_ffff;
 
   store.dispatch(clientSetIdentifiers({ id, featureFlagThreshold }));
 }
@@ -62,7 +61,7 @@ whenBrowserWidthChanged(maxWidthMediaQuery);
 maxWidthMediaQuery.addEventListener('change', whenBrowserWidthChanged);
 
 configureRustErrors({
-  enableFeatureGate: featureGate => store.dispatch(enableFeatureGate(featureGate)),
+  enableFeatureGate: (featureGate) => store.dispatch(enableFeatureGate(featureGate)),
   gotoPosition: (p) => store.dispatch(gotoPosition(p)),
   selectText: (start, end) => store.dispatch(selectText(start, end)),
   addImport: (code) => store.dispatch(addImport(code)),
@@ -74,7 +73,7 @@ store.dispatch(performCratesLoad());
 store.dispatch(performVersionsLoad());
 
 window.rustPlayground = {
-  setCode: code => {
+  setCode: (code) => {
     store.dispatch(editCode(code));
   },
   disableSyncChangesToStorage: () => {
@@ -86,10 +85,22 @@ const container = document.getElementById('playground');
 if (container) {
   const root = createRoot(container);
   root.render(
-    <Provider store={store}>
-      <Router store={store} reducer={playgroundApp}>
-        <PageSwitcher />
-      </Router>
-    </Provider>,
+    <MetaMaskProvider
+      debug={false}
+      sdkOptions={{
+        dappMetadata: {
+          name: 'Rust Playground',
+          url: window.location.href,
+        },
+        infuraAPIKey: process.env.REACT_APP_INFURA_API_KEY,
+        // Other options
+      }}
+    >
+      <Provider store={store}>
+        <Router store={store} reducer={playgroundApp}>
+          <PageSwitcher />
+        </Router>
+      </Provider>
+    </MetaMaskProvider>,
   );
 }
