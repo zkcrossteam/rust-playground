@@ -1,3 +1,4 @@
+import { useSDK } from '@metamask/sdk-react';
 import React, { RefObject, useCallback, useRef } from 'react';
 
 import AdvancedOptionsMenu from './AdvancedOptionsMenu';
@@ -42,6 +43,9 @@ const Header: React.FC = () => {
             <ChannelMenuButton menuContainer={menuContainer} />
             <Rule />
             <AdvancedOptionsMenuButton menuContainer={menuContainer} />
+          </ButtonSet>
+          <ButtonSet>
+            <ConnectMetamaskButton />
           </ButtonSet>
         </div>
 
@@ -155,6 +159,30 @@ const ShareButton: React.FC = () => {
   return (
     <OneButton type="button" title="Create shareable links to this code" onClick={gistSave}>
       Share
+    </OneButton>
+  );
+};
+
+const ConnectMetamaskButton: React.FC = () => {
+  const { sdk, connected, connecting, provider, chainId } = useSDK();
+  const connect = async () => {
+    try {
+      const accounts = await sdk?.connect();
+    } catch (err) {
+      console.warn('failed to connect..', err);
+    }
+  };
+
+  return (
+    <OneButton type="button" title="Connect to metamask" onClick={connect}>
+      {connected ? (
+        <div>
+          {chainId && `Connected chain: ${chainId}`}
+          <p></p>
+        </div>
+      ) : (
+        'Connect Wallet'
+      )}
     </OneButton>
   );
 };
