@@ -62,8 +62,10 @@ const reportWebSocketError = (() => {
 
 const openWebSocket = (currentLocation: Location) => {
   try {
+    // const host = currentLocation.host
+    const host = "play.rust-lang.org"
     const wsProtocol = currentLocation.protocol === 'https:' ? 'wss://' : 'ws://';
-    const wsUri = [wsProtocol, currentLocation.host, '/websocket'].join('');
+    const wsUri = [wsProtocol, host, '/websocket'].join('');
     return new WebSocket(wsUri);
   } catch (e) {
     // WebSocket URL error or WebSocket is not supported by browser.

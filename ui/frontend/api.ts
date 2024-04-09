@@ -1,17 +1,18 @@
 import * as z from 'zod';
 
+const host = 'https://play.rust-lang.org'
 export const routes = {
-  compile: '/compile',
-  execute: '/execute',
-  format: '/format',
-  clippy: '/clippy',
-  miri: '/miri',
-  macroExpansion: '/macro-expansion',
+  compile: `${host}/compile`,
+  execute:  `${host}/execute`,
+  format: `${host}/format`,
+  clippy: `${host}/clippy`,
+  miri: `${host}/miri`,
+  macroExpansion:  `${host}/macro-expansion`,
   meta: {
-    crates: '/meta/crates',
-    versions: '/meta/versions',
-    gistSave: '/meta/gist',
-    gistLoad: '/meta/gist/id',
+    crates: `${host}/meta/crates`,
+    versions:  `${host}/meta/versions`,
+    gistSave: `${host}/meta/gist`,
+    gistLoad: `${host}/meta/gist/id`,
   },
 };
 
