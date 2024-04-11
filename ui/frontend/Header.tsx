@@ -46,7 +46,9 @@ const Header: React.FC = () => {
             <Rule />
             <AdvancedOptionsMenuButton menuContainer={menuContainer} />
           </ButtonSet>
-          <ButtonSet><ConnectMetamaskButton /></ButtonSet>
+          <ButtonSet>
+            <ConnectMetamaskButton />
+          </ButtonSet>
         </div>
 
         <div className={styles.right}>
@@ -176,17 +178,19 @@ const ConnectMetamaskButton: React.FC = () => {
   const disconnect = async () => {
     try {
       await sdk?.terminate();
-      setMetamaskAccount(null);
+      // setMetamaskAccount(null);
     } catch (err) {
       console.warn('failed to disconnect..', err);
     }
   };
   const connect = async () => {
+    console.log('Click connect');
     try {
-      const accounts = await (sdk?.connect() as string[] | undefined );
-      if(accounts){
-        setMetamaskAccount({ address: accounts[0] });
-      }
+      const accounts = await (sdk?.connect() as string[] | undefined);
+      console.log('Connect to account', accounts?.[0]);
+      // if (accounts) {
+      //   setMetamaskAccount({ address: accounts[0] });
+      // }
     } catch (err) {
       console.warn('failed to connect..', err);
     }
@@ -194,17 +198,40 @@ const ConnectMetamaskButton: React.FC = () => {
   // const account = useAppSelector((state) => selectors.accountSelector(state));
 
   return (
-    <OneButton type="button" title="Connect to metamask" onClick={connect}>
-      {connected ? (
-        <div>
-          {chainId && `Connected chain: ${chainId}`}
-          <p></p>
-          {account && `Connected account: ${account}`}
-        </div>
-      ) : (
-        'Connect Wallet'
-      )}
-    </OneButton>
+    <div>
+      <OneButton
+        type="button"
+        title= {!connected ? "Connect to metamask" : "Disconnect to metamask"}
+        onClick={!connected ? connect : disconnect}
+      >
+        {connected ? (
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100vh',
+            }}
+          >
+            <div style={{ marginRight: '5px' }}>
+              {account
+                ? `${account.substring(0, 5)}...${account.substring(account.length - 5)}`
+                : ''}
+            </div>
+            <div
+              style={{
+                width: '10px',
+                height: '10px',
+                backgroundColor: 'green',
+                borderRadius: '50%',
+              }}
+            ></div>
+          </div>
+        ) : (
+          'Connect Wallet'
+        )}
+      </OneButton>
+    </div>
   );
 };
 
