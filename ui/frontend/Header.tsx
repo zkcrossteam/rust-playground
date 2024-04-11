@@ -171,7 +171,8 @@ const ConnectMetamaskButton: React.FC = () => {
     },
     [dispatch],
   );
-  const { sdk, connected, connecting, provider, chainId } = useSDK();
+  const { sdk, connected, connecting, provider, chainId, account } = useSDK();
+
   const disconnect = async () => {
     try {
       await sdk?.terminate();
@@ -190,7 +191,7 @@ const ConnectMetamaskButton: React.FC = () => {
       console.warn('failed to connect..', err);
     }
   };
-  const account = useAppSelector((state) => selectors.accountSelector(state));
+  // const account = useAppSelector((state) => selectors.accountSelector(state));
 
   return (
     <OneButton type="button" title="Connect to metamask" onClick={connect}>
@@ -198,7 +199,7 @@ const ConnectMetamaskButton: React.FC = () => {
         <div>
           {chainId && `Connected chain: ${chainId}`}
           <p></p>
-          {account && `Connected account: ${account.address}`}
+          {account && `Connected account: ${account}`}
         </div>
       ) : (
         'Connect Wallet'

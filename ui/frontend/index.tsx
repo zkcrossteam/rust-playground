@@ -90,7 +90,7 @@ if (container) {
       sdkOptions={{
         dappMetadata: {
           name: 'Rust Playground',
-          url: window.location.href,
+          url: window.location.href
         },
         infuraAPIKey: process.env.REACT_APP_INFURA_API_KEY,
         // Other options
