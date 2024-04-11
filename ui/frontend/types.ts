@@ -2,6 +2,14 @@ import * as z from 'zod';
 
 export type Page = 'index' | 'help';
 
+export interface Account {
+  address: string;
+}
+
+export interface AccountState {
+  account: Account | null;
+}
+
 export interface Position {
   line: number;
   column: number;

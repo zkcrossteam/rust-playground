@@ -19,9 +19,11 @@ import PopButton, { ButtonProps } from './PopButton';
 import ToolsMenu from './ToolsMenu';
 import * as actions from './actions';
 import { useAppDispatch, useAppSelector } from './hooks';
+import { setAccount } from './reducers/metamask';
 import { performGistSave } from './reducers/output/gist';
 import { navigateToHelp } from './reducers/page';
 import * as selectors from './selectors';
+import { Account } from './types';
 
 import styles from './Header.module.css';
 
@@ -44,9 +46,7 @@ const Header: React.FC = () => {
             <Rule />
             <AdvancedOptionsMenuButton menuContainer={menuContainer} />
           </ButtonSet>
-          <ButtonSet>
-            <ConnectMetamaskButton />
-          </ButtonSet>
+          <ButtonSet><ConnectMetamaskButton /></ButtonSet>
         </div>
 
         <div className={styles.right}>
@@ -164,14 +164,33 @@ const ShareButton: React.FC = () => {
 };
 
 const ConnectMetamaskButton: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const setMetamaskAccount = useCallback(
+    (account: Account | null) => {
+      dispatch(setAccount(account));
+    },
+    [dispatch],
+  );
   const { sdk, connected, connecting, provider, chainId } = useSDK();
+  const disconnect = async () => {
+    try {
+      await sdk?.terminate();
+      setMetamaskAccount(null);
+    } catch (err) {
+      console.warn('failed to disconnect..', err);
+    }
+  };
   const connect = async () => {
     try {
-      const accounts = await sdk?.connect();
+      const accounts = await (sdk?.connect() as string[] | undefined );
+      if(accounts){
+        setMetamaskAccount({ address: accounts[0] });
+      }
     } catch (err) {
       console.warn('failed to connect..', err);
     }
   };
+  const account = useAppSelector((state) => selectors.accountSelector(state));
 
   return (
     <OneButton type="button" title="Connect to metamask" onClick={connect}>
@@ -179,6 +198,7 @@ const ConnectMetamaskButton: React.FC = () => {
         <div>
           {chainId && `Connected chain: ${chainId}`}
           <p></p>
+          {account && `Connected account: ${account.address}`}
         </div>
       ) : (
         'Connect Wallet'

@@ -14,6 +14,7 @@ import position from './position';
 import selection from './selection';
 import versions from './versions';
 import websocket from './websocket';
+import metamask from './metamask';
 
 const playgroundApp = combineReducers({
   browser,
@@ -30,6 +31,7 @@ const playgroundApp = combineReducers({
   selection,
   versions,
   websocket,
+  metamask
 });
 
 export type State = ReturnType<typeof playgroundApp>;
