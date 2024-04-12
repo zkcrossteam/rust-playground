@@ -166,6 +166,7 @@ const ShareButton: React.FC = () => {
 };
 
 const ConnectMetamaskButton: React.FC = () => {
+  const { sdk, connected, provider, chainId, account } = useSDK();
   const targetChainId = process.env.REACT_APP_Target_Chain_ID;
   const dispatch = useAppDispatch();
   const setMetamaskAccount = useCallback(
@@ -174,8 +175,6 @@ const ConnectMetamaskButton: React.FC = () => {
     },
     [dispatch],
   );
-  const { sdk, connected, provider, chainId, account } = useSDK();
-
   const disconnect = async () => {
     try {
       await sdk?.terminate();
