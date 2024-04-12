@@ -185,22 +185,20 @@ const ConnectMetamaskButton: React.FC = () => {
     }
   };
 
-  const switchEthereumChain = async () => {
+  const switchEthereumChain = async (hexChainId: string | undefined) => {
+    if (!hexChainId){
+      console.debug(`hexChainId is undefined`);
+      return;
+    }
+    console.debug(`switching to network chainId=${hexChainId}`);
     try {
-      if (!provider) {
-        throw new Error(`invalid ethereum provider`);
-      }
-      await provider.request({
+      const response = await provider?.request({
         method: 'wallet_switchEthereumChain',
-        params: [
-          {
-            chainId: targetChainId,
-          },
-        ],
+        params: [{ chainId: hexChainId }], // chainId must be in hexadecimal numbers
       });
-      console.log('Switched Ethereum chain successfully.');
-    } catch (e) {
-      console.log('Switch chain err', e);
+      console.debug(`response`, response);
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -214,7 +212,7 @@ const ConnectMetamaskButton: React.FC = () => {
     } catch (err) {
       console.warn('failed to connect..', err);
     }
-    await switchEthereumChain();
+    await switchEthereumChain(targetChainId);
   };
 
   const local_account = useAppSelector((state) => selectors.accountSelector(state));
@@ -227,7 +225,7 @@ const ConnectMetamaskButton: React.FC = () => {
 
   useEffect(() => {
     if (connected && chainId !== targetChainId) {
-      switchEthereumChain();
+      switchEthereumChain(targetChainId);
     }
   }, [connected, targetChainId]);
 
