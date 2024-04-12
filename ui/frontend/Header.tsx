@@ -223,6 +223,7 @@ const ConnectMetamaskButton: React.FC = () => {
   }, [account, local_account?.address, setMetamaskAccount]);
 
   useEffect(() => {
+    // console.log("connected=", connected, "chainId=", chainId)
     if (connected && chainId !== targetChainId) {
       switchEthereumChain(targetChainId);
     }
