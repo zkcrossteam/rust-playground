@@ -1,6 +1,6 @@
 import { useSDK } from '@metamask/sdk-react';
 import { ethers } from 'ethers';
-import React, { RefObject, useCallback, useRef, useEffect } from 'react';
+import React, { RefObject, useCallback, useEffect, useRef } from 'react';
 
 import AdvancedOptionsMenu from './AdvancedOptionsMenu';
 import BuildMenu from './BuildMenu';
@@ -167,6 +167,7 @@ const ShareButton: React.FC = () => {
 };
 
 const ConnectMetamaskButton: React.FC = () => {
+  const sepoliaChainId = '0xaa36a7';
   const dispatch = useAppDispatch();
   const setMetamaskAccount = useCallback(
     (account: Account | null) => {
@@ -184,6 +185,36 @@ const ConnectMetamaskButton: React.FC = () => {
       console.warn('failed to disconnect..', err);
     }
   };
+
+  let switchingChain = false;
+
+  const switchEthereumChain = async () => {
+    if (switchingChain) {
+      console.log('Switching chain request already pending. Please wait.');
+      return;
+    }
+
+    try {
+      switchingChain = true; // 设置标志为true，表示正在切换链
+      if (!provider) {
+        throw new Error(`invalid ethereum provider`);
+      }
+      await provider.request({
+        method: 'wallet_switchEthereumChain',
+        params: [
+          {
+            chainId: sepoliaChainId,
+          },
+        ],
+      });
+      console.log('Switched Ethereum chain successfully.');
+    } catch (e) {
+      console.log('Switch chain err', e);
+    } finally {
+      switchingChain = false; // 无论成功与否，都将标志设置回false
+    }
+  };
+
   const connect = async () => {
     try {
       const accounts = await (sdk?.connect() as string[] | undefined);
@@ -194,7 +225,9 @@ const ConnectMetamaskButton: React.FC = () => {
     } catch (err) {
       console.warn('failed to connect..', err);
     }
+    await switchEthereumChain();
   };
+
   const local_account = useAppSelector((state) => selectors.accountSelector(state));
   useEffect(() => {
     if (account && local_account?.address !== account) {
@@ -202,11 +235,17 @@ const ConnectMetamaskButton: React.FC = () => {
     }
   }, [account, local_account?.address, setMetamaskAccount]);
 
+  useEffect(() => {
+    if (chainId && chainId !== sepoliaChainId) {
+      switchEthereumChain();
+    }
+  }, [chainId, sepoliaChainId]);
+
   return (
     <div>
       <OneButton
         type="button"
-        title= {!connected ? "Connect to metamask" : "Disconnect to metamask"}
+        title={!connected ? 'Connect to metamask' : 'Disconnect to metamask'}
         onClick={!connected ? connect : disconnect}
       >
         {connected ? (
