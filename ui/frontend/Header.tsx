@@ -1,5 +1,6 @@
 import { useSDK } from '@metamask/sdk-react';
-import React, { RefObject, useCallback, useRef } from 'react';
+import { ethers } from 'ethers';
+import React, { RefObject, useCallback, useRef, useEffect } from 'react';
 
 import AdvancedOptionsMenu from './AdvancedOptionsMenu';
 import BuildMenu from './BuildMenu';
@@ -195,10 +196,11 @@ const ConnectMetamaskButton: React.FC = () => {
     }
   };
   const local_account = useAppSelector((state) => selectors.accountSelector(state));
-  // 如果已经连接过metamask，则直接读出来放到store里边去存起来
-  if(account && local_account?.address != account){
-    setMetamaskAccount({ address: account });
-  }
+  useEffect(() => {
+    if (account && local_account?.address !== account) {
+      setMetamaskAccount({ address: account });
+    }
+  }, [account, local_account?.address, setMetamaskAccount]);
 
   return (
     <div>
