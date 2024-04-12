@@ -178,24 +178,27 @@ const ConnectMetamaskButton: React.FC = () => {
   const disconnect = async () => {
     try {
       await sdk?.terminate();
-      // setMetamaskAccount(null);
+      setMetamaskAccount(null);
     } catch (err) {
       console.warn('failed to disconnect..', err);
     }
   };
   const connect = async () => {
-    console.log('Click connect');
     try {
       const accounts = await (sdk?.connect() as string[] | undefined);
       console.log('Connect to account', accounts?.[0]);
-      // if (accounts) {
-      //   setMetamaskAccount({ address: accounts[0] });
-      // }
+      if (accounts) {
+        setMetamaskAccount({ address: accounts[0] });
+      }
     } catch (err) {
       console.warn('failed to connect..', err);
     }
   };
-  // const account = useAppSelector((state) => selectors.accountSelector(state));
+  const local_account = useAppSelector((state) => selectors.accountSelector(state));
+  // 如果已经连接过metamask，则直接读出来放到store里边去存起来
+  if(account && local_account?.address != account){
+    setMetamaskAccount({ address: account });
+  }
 
   return (
     <div>
@@ -214,8 +217,8 @@ const ConnectMetamaskButton: React.FC = () => {
             }}
           >
             <div style={{ marginRight: '5px' }}>
-              {account
-                ? `${account.substring(0, 5)}...${account.substring(account.length - 5)}`
+              {local_account
+                ? `${local_account.address.substring(0, 5)}...${local_account.address.substring(local_account.address.length - 5)}`
                 : ''}
             </div>
             <div
