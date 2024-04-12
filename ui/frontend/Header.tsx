@@ -1,5 +1,4 @@
 import { useSDK } from '@metamask/sdk-react';
-import { ethers } from 'ethers';
 import React, { RefObject, useCallback, useEffect, useRef } from 'react';
 
 import AdvancedOptionsMenu from './AdvancedOptionsMenu';
@@ -175,7 +174,7 @@ const ConnectMetamaskButton: React.FC = () => {
     },
     [dispatch],
   );
-  const { sdk, connected, connecting, provider, chainId, account } = useSDK();
+  const { sdk, connected, provider, chainId, account } = useSDK();
 
   const disconnect = async () => {
     try {
@@ -186,16 +185,8 @@ const ConnectMetamaskButton: React.FC = () => {
     }
   };
 
-  let switchingChain = false;
-
   const switchEthereumChain = async () => {
-    if (switchingChain) {
-      console.log('Switching chain request already pending. Please wait.');
-      return;
-    }
-
     try {
-      switchingChain = true; // 设置标志为true，表示正在切换链
       if (!provider) {
         throw new Error(`invalid ethereum provider`);
       }
@@ -210,8 +201,6 @@ const ConnectMetamaskButton: React.FC = () => {
       console.log('Switched Ethereum chain successfully.');
     } catch (e) {
       console.log('Switch chain err', e);
-    } finally {
-      switchingChain = false; // 无论成功与否，都将标志设置回false
     }
   };
 
@@ -229,6 +218,7 @@ const ConnectMetamaskButton: React.FC = () => {
   };
 
   const local_account = useAppSelector((state) => selectors.accountSelector(state));
+
   useEffect(() => {
     if (account && local_account?.address !== account) {
       setMetamaskAccount({ address: account });
@@ -236,10 +226,10 @@ const ConnectMetamaskButton: React.FC = () => {
   }, [account, local_account?.address, setMetamaskAccount]);
 
   useEffect(() => {
-    if (chainId && chainId !== sepoliaChainId) {
+    if (connected && chainId !== sepoliaChainId) {
       switchEthereumChain();
     }
-  }, [chainId, sepoliaChainId]);
+  }, [connected, sepoliaChainId]);
 
   return (
     <div>
