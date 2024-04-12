@@ -166,7 +166,7 @@ const ShareButton: React.FC = () => {
 };
 
 const ConnectMetamaskButton: React.FC = () => {
-  const sepoliaChainId = '0xaa36a7';
+  const targetChainId = process.env.REACT_APP_Target_Chain_ID;
   const dispatch = useAppDispatch();
   const setMetamaskAccount = useCallback(
     (account: Account | null) => {
@@ -194,7 +194,7 @@ const ConnectMetamaskButton: React.FC = () => {
         method: 'wallet_switchEthereumChain',
         params: [
           {
-            chainId: sepoliaChainId,
+            chainId: targetChainId,
           },
         ],
       });
@@ -226,10 +226,10 @@ const ConnectMetamaskButton: React.FC = () => {
   }, [account, local_account?.address, setMetamaskAccount]);
 
   useEffect(() => {
-    if (connected && chainId !== sepoliaChainId) {
+    if (connected && chainId !== targetChainId) {
       switchEthereumChain();
     }
-  }, [connected, sepoliaChainId]);
+  }, [connected, targetChainId]);
 
   return (
     <div>
