@@ -36,7 +36,7 @@ const Header: React.FC = () => {
         <div className={styles.left}>
           <ButtonSet>
             <ExecuteButton />
-            <BuildMenuButton menuContainer={menuContainer} />
+            {/* <BuildMenuButton menuContainer={menuContainer} /> */}
           </ButtonSet>
 
           <ButtonSet>

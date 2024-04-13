@@ -55,7 +55,8 @@ const initialState: State = {
   // primaryAction: PrimaryActionAuto.Auto,
    primaryAction: PrimaryActionCore.Wasm,
   channel: Channel.Stable,
-  mode: Mode.Debug,
+  // mode: Mode.Debug,
+  mode: Mode.Release,
   edition: Edition.Rust2021,
   backtrace: Backtrace.Disabled,
 };

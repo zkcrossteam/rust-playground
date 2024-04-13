@@ -139,7 +139,7 @@ export function indexPageLoad({
 }): ThunkAction {
   return function (dispatch) {
     const channel = parseChannel(version) || Channel.Stable;
-    const mode = parseMode(modeString) || Mode.Debug;
+    const mode = parseMode(modeString) || Mode.Release;
     let maybeEdition = parseEdition(editionString);
 
     dispatch(navigateToIndex());
