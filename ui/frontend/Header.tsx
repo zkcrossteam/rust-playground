@@ -49,6 +49,9 @@ const Header: React.FC = () => {
           <ButtonSet>
             <ConnectMetamaskButton />
           </ButtonSet>
+          <ButtonSet>
+            <UploadToNodeButton />
+          </ButtonSet>
         </div>
 
         <div className={styles.right}>
@@ -185,7 +188,7 @@ const ConnectMetamaskButton: React.FC = () => {
   };
 
   const switchEthereumChain = async (hexChainId: string | undefined) => {
-    if (!hexChainId){
+    if (!hexChainId) {
       console.debug(`hexChainId is undefined`);
       return;
     }
@@ -262,6 +265,16 @@ const ConnectMetamaskButton: React.FC = () => {
         ) : (
           'Connect Wallet'
         )}
+      </OneButton>
+    </div>
+  );
+};
+
+const UploadToNodeButton: React.FC = () => {
+  return (
+    <div>
+      <OneButton type="button" title={'Upload to node'} disabled={true} onClick={() => {}}>
+        Upload WASM
       </OneButton>
     </div>
   );
