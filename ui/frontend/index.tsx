@@ -1,5 +1,4 @@
 import { MetaMaskProvider } from '@metamask/sdk-react';
-
 import 'core-js';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
@@ -15,17 +14,29 @@ import playgroundApp from './reducers';
 import { browserWidthChanged } from './reducers/browser';
 import { clientSetIdentifiers } from './reducers/client';
 import { addImport, editCode, enableFeatureGate } from './reducers/code';
+import { addCrateType } from './reducers/code';
 import { performCratesLoad } from './reducers/crates';
 import { featureFlagsForceDisableAll, featureFlagsForceEnableAll } from './reducers/featureFlags';
 import { disableSyncChangesToStorage, override } from './reducers/globalConfiguration';
 import { gotoPosition } from './reducers/position';
 import { selectText } from './reducers/selection';
 import { performVersionsLoad } from './reducers/versions';
+import { wasmLikelyToWork } from './selectors';
+import { PrimaryActionCore } from './types';
 
 import './index.module.css';
 import 'normalize.css/normalize.css';
 
 const store = configureStore(window);
+const state = store.getState();
+
+// if primaryAction is PrimaryActionCore.Wasm, we will addCrateType
+if (state.configuration.primaryAction === PrimaryActionCore.Wasm) {
+  // check #![crate_type = "cdylib"]
+  if (!wasmLikelyToWork(state)) {
+    store.dispatch(addCrateType('cdylib'));
+  }
+}
 
 if (store.getState().client.id === '') {
   const { crypto } = window;
@@ -90,7 +101,7 @@ if (container) {
       sdkOptions={{
         dappMetadata: {
           name: 'Rust Playground',
-          url: window.location.href
+          url: window.location.href,
         },
         infuraAPIKey: process.env.REACT_APP_INFURA_API_KEY,
         // Other options

@@ -53,7 +53,7 @@ const initialState: State = {
   demangleAssembly: DemangleAssembly.Demangle,
   processAssembly: ProcessAssembly.Filter,
   // primaryAction: PrimaryActionAuto.Auto,
-   primaryAction: PrimaryActionCore.Wasm,
+  primaryAction: PrimaryActionCore.Wasm,
   channel: Channel.Stable,
   // mode: Mode.Debug,
   mode: Mode.Release,
