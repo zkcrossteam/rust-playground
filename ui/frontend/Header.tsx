@@ -174,7 +174,7 @@ const ConnectMetamaskButton: React.FC = () => {
   const dispatch = useAppDispatch();
   const disconnect = async () => {
     try {
-      dispatch(setAccount(null));
+      // dispatch(setAccount(null));
       await sdk?.terminate();
     } catch (err) {
       console.warn('failed to disconnect..', err);
@@ -213,8 +213,10 @@ const ConnectMetamaskButton: React.FC = () => {
   const local_account = useAppSelector((state) => selectors.accountSelector(state));
 
   useEffect(() => {
-    if (account && local_account?.address !== account) {
+    if (account) {
       dispatch(setAccount({ address: account }));
+    }else{
+      dispatch(setAccount(null));
     }
   }, [account]);
 
