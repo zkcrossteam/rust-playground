@@ -174,7 +174,6 @@ const ConnectMetamaskButton: React.FC = () => {
   const dispatch = useAppDispatch();
   const disconnect = async () => {
     try {
-      // dispatch(setAccount(null));
       await sdk?.terminate();
     } catch (err) {
       console.warn('failed to disconnect..', err);
@@ -200,11 +199,7 @@ const ConnectMetamaskButton: React.FC = () => {
 
   const connect = async () => {
     try {
-      const accounts = await (sdk?.connect() as string[] | undefined);
-      console.log('Connect to account', accounts?.[0]);
-      if (accounts) {
-        dispatch(setAccount({ address: accounts[0] }))
-      }
+      await sdk?.connect() 
     } catch (err) {
       console.warn('failed to connect..', err);
     }
