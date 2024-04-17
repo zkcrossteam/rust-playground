@@ -1,4 +1,5 @@
 import { useSDK } from '@metamask/sdk-react';
+import { Buffer } from 'buffer';
 import React, { RefObject, useCallback, useEffect, useRef } from 'react';
 
 import AdvancedOptionsMenu from './AdvancedOptionsMenu';
@@ -199,7 +200,7 @@ const ConnectMetamaskButton: React.FC = () => {
 
   const connect = async () => {
     try {
-      await sdk?.connect() 
+      await sdk?.connect();
     } catch (err) {
       console.warn('failed to connect..', err);
     }
@@ -210,7 +211,7 @@ const ConnectMetamaskButton: React.FC = () => {
   useEffect(() => {
     if (account) {
       dispatch(setAccount({ address: account }));
-    }else{
+    } else {
       dispatch(setAccount(null));
     }
   }, [account]);
@@ -264,10 +265,35 @@ const UploadToNodeButton: React.FC = () => {
   // has already connected to metamask && wasm code is exists
   const local_account = useAppSelector((state) => selectors.accountSelector(state));
   const { wasm } = useAppSelector((state) => state.output);
-  const is_active = local_account && wasm.code 
+  const is_active = local_account && wasm.code;
+  const { provider } = useSDK();
+
+  const uploadWASMToNode = async () => {
+    if (local_account && wasm.code) {
+      try {
+        const message = wasm.code;
+        const hexMessage = '0x' + Buffer.from(message, 'utf8').toString('hex');
+        const sign = await provider?.request({
+          method: 'personal_sign',
+          params: [hexMessage, local_account.address],
+        });
+        console.log(`sign: ${sign}`);
+      } catch (err) {
+        console.warn(`failed to connect..`, err);
+      }
+    } else {
+      console.warn(`WASM code not exists..`);
+    }
+  };
+
   return (
     <div>
-      <OneButton type="button" title={'Upload to node'} disabled={!is_active} onClick={() => {}}>
+      <OneButton
+        type="button"
+        title={'Upload to node'}
+        disabled={!is_active}
+        onClick={uploadWASMToNode}
+      >
         Upload WASM
       </OneButton>
     </div>
