@@ -1,6 +1,7 @@
 import * as z from 'zod';
 
 const host = 'https://play.rust-lang.org'
+const node_host = process.env.REACT_APP_NODE_HOST;
 export const routes = {
   compile: `${host}/compile`,
   execute:  `${host}/execute`,
@@ -14,6 +15,7 @@ export const routes = {
     gistSave: `${host}/meta/gist`,
     gistLoad: `${host}/meta/gist/id`,
   },
+  uploadWasm: `${node_host}/public_api/upload_wasm`,
 };
 
 type FetchArg = Parameters<typeof fetch>[0];

@@ -24,7 +24,7 @@ import { setAccount } from './reducers/metamask';
 import { performGistSave } from './reducers/output/gist';
 import { navigateToHelp } from './reducers/page';
 import * as selectors from './selectors';
-import { Account } from './types';
+import { jsonPost, routes } from './api';
 
 import styles from './Header.module.css';
 
@@ -278,6 +278,13 @@ const UploadToNodeButton: React.FC = () => {
           params: [hexMessage, local_account.address],
         });
         console.log(`sign: ${sign}`);
+        const payload = {
+          content: wasm.code,
+          signature: sign
+        }
+        const d = await jsonPost(routes.uploadWasm, payload);
+        console.log("uploadWASMToNode response: ", d);
+
       } catch (err) {
         console.warn(`failed to connect..`, err);
       }
