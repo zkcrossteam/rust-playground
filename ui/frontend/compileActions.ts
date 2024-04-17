@@ -39,7 +39,6 @@ interface CompileActions {
 export const makeCompileActions = ({ sliceName, target }: Props): CompileActions => {
   const action = createAsyncThunk(sliceName, async (payload: CompileRequestBody) => {
     const d = await jsonPost(routes.compile, payload);
-    console.log("######d=", d)
     return CompileResponseBody.parseAsync(d);
   });
 

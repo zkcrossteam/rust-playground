@@ -172,16 +172,10 @@ const ConnectMetamaskButton: React.FC = () => {
   const { sdk, connected, provider, chainId, account } = useSDK();
   const targetChainId = process.env.REACT_APP_Target_Chain_ID;
   const dispatch = useAppDispatch();
-  const setMetamaskAccount = useCallback(
-    (account: Account | null) => {
-      dispatch(setAccount(account));
-    },
-    [dispatch],
-  );
   const disconnect = async () => {
     try {
+      dispatch(setAccount(null));
       await sdk?.terminate();
-      setMetamaskAccount(null);
     } catch (err) {
       console.warn('failed to disconnect..', err);
     }
@@ -209,21 +203,20 @@ const ConnectMetamaskButton: React.FC = () => {
       const accounts = await (sdk?.connect() as string[] | undefined);
       console.log('Connect to account', accounts?.[0]);
       if (accounts) {
-        setMetamaskAccount({ address: accounts[0] });
+        dispatch(setAccount({ address: accounts[0] }))
       }
     } catch (err) {
       console.warn('failed to connect..', err);
     }
-    await switchEthereumChain(targetChainId);
   };
 
   const local_account = useAppSelector((state) => selectors.accountSelector(state));
 
   useEffect(() => {
     if (account && local_account?.address !== account) {
-      setMetamaskAccount({ address: account });
+      dispatch(setAccount({ address: account }));
     }
-  }, [account, local_account?.address, setMetamaskAccount]);
+  }, [account]);
 
   useEffect(() => {
     // console.log("connected=", connected, "chainId=", chainId)
@@ -271,9 +264,13 @@ const ConnectMetamaskButton: React.FC = () => {
 };
 
 const UploadToNodeButton: React.FC = () => {
+  // has already connected to metamask && wasm code is exists
+  const local_account = useAppSelector((state) => selectors.accountSelector(state));
+  const { wasm } = useAppSelector((state) => state.output);
+  const is_active = local_account && wasm.code 
   return (
     <div>
-      <OneButton type="button" title={'Upload to node'} disabled={true} onClick={() => {}}>
+      <OneButton type="button" title={'Upload to node'} disabled={!is_active} onClick={() => {}}>
         Upload WASM
       </OneButton>
     </div>
