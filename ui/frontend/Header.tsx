@@ -1,6 +1,7 @@
 import { useSDK } from '@metamask/sdk-react';
 import { Buffer } from 'buffer';
 import React, { RefObject, useCallback, useEffect, useRef } from 'react';
+import { MD5 } from 'crypto-js';
 
 import AdvancedOptionsMenu from './AdvancedOptionsMenu';
 import BuildMenu from './BuildMenu';
@@ -278,9 +279,13 @@ const UploadToNodeButton: React.FC = () => {
           params: [hexMessage, local_account.address],
         });
         console.log(`sign: ${sign}`);
+        const image = wasm.code + sign;
+        const image_md5 = MD5(image).toString();
         const payload = {
-          content: wasm.code,
-          signature: sign
+          image: image,
+          image_md5: image_md5
+          // content: wasm.code,
+          // signature: sign
         }
         const d = await jsonPost(routes.uploadWasm, payload);
         console.log("uploadWASMToNode response: ", d);

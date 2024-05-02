@@ -15,7 +15,7 @@ export const routes = {
     gistSave: `${host}/meta/gist`,
     gistLoad: `${host}/meta/gist/id`,
   },
-  uploadWasm: `${node_host}/public_api/upload_wasm`,
+  uploadWasm: `${node_host}/rpc-add-new-image`,
 };
 
 type FetchArg = Parameters<typeof fetch>[0];
