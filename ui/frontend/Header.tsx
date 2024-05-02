@@ -1,7 +1,7 @@
 import { useSDK } from '@metamask/sdk-react';
 import { Buffer } from 'buffer';
-import React, { RefObject, useCallback, useEffect, useRef } from 'react';
 import { MD5 } from 'crypto-js';
+import React, { RefObject, useCallback, useEffect, useRef } from 'react';
 
 import AdvancedOptionsMenu from './AdvancedOptionsMenu';
 import BuildMenu from './BuildMenu';
@@ -20,12 +20,12 @@ import ModeMenu from './ModeMenu';
 import PopButton, { ButtonProps } from './PopButton';
 import ToolsMenu from './ToolsMenu';
 import * as actions from './actions';
+import { jsonPost, routes } from './api';
 import { useAppDispatch, useAppSelector } from './hooks';
 import { setAccount } from './reducers/metamask';
 import { performGistSave } from './reducers/output/gist';
 import { navigateToHelp } from './reducers/page';
 import * as selectors from './selectors';
-import { jsonPost, routes } from './api';
 
 import styles from './Header.module.css';
 
@@ -282,14 +282,15 @@ const UploadToNodeButton: React.FC = () => {
         const image = wasm.code + sign;
         const image_md5 = MD5(image).toString();
         const payload = {
-          image: image,
-          image_md5: image_md5
-          // content: wasm.code,
-          // signature: sign
-        }
+          jsonrpc: '2.0',
+          method: 'rpc-add-new-image',
+          params: {
+            image: image,
+            image_md5: image_md5,
+          },
+        };
         const d = await jsonPost(routes.uploadWasm, payload);
-        console.log("uploadWASMToNode response: ", d);
-
+        console.log('uploadWASMToNode response: ', d);
       } catch (err) {
         console.warn(`failed to connect..`, err);
       }

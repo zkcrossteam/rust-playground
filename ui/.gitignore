@@ -1,3 +1,4 @@
 .env
 access-log.csv
 target
+ui/fronted/node_modules/
