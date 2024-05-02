@@ -279,7 +279,7 @@ const UploadToNodeButton: React.FC = () => {
           params: [hexMessage, local_account.address],
         });
         console.log(`sign: ${sign}`);
-        const image = wasm.code + sign;
+        const image = btoa(wasm.code + sign);
         const image_md5 = MD5(image).toString();
         const payload = {
           jsonrpc: '2.0',
@@ -289,6 +289,7 @@ const UploadToNodeButton: React.FC = () => {
             image_md5: image_md5,
           },
         };
+        console.log('payload: ', payload);
         const d = await jsonPost(routes.uploadWasm, payload);
         console.log('uploadWASMToNode response: ', d);
       } catch (err) {
