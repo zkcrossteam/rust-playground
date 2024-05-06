@@ -1,6 +1,7 @@
 import * as z from 'zod';
 
-const host = 'https://play.rust-lang.org'
+// const host = 'https://play.rust-lang.org'
+const host = 'https://play.zkcross.org'
 const node_host = process.env.REACT_APP_NODE_HOST;
 export const routes = {
   compile: `${host}/compile`,
