@@ -30,11 +30,15 @@ import 'normalize.css/normalize.css';
 const store = configureStore(window);
 const state = store.getState();
 
-// if primaryAction is PrimaryActionCore.Wasm, we will addCrateType
 if (state.configuration.primaryAction === PrimaryActionCore.Wasm) {
   // check #![crate_type = "cdylib"]
   if (!wasmLikelyToWork(state)) {
-    store.dispatch(addCrateType('cdylib'));
+    const code = state.code;
+    const crateTypeRegex = /^#!\[crate_type\s*=\s*"([^"]*)"\s*\]/m;
+    const match = code.match(crateTypeRegex);
+    if (!match || match[1] !== 'cdylib') {
+      store.dispatch(addCrateType('cdylib'));
+    }
   }
 }
 

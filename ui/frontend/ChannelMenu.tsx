@@ -31,7 +31,7 @@ const ChannelMenu: React.FC<ChannelMenuProps> = props => {
   return (
     <Fragment>
       <MenuGroup title="Channel &mdash; Choose the rust version">
-        <SelectOne
+      {/* <SelectOne
           name="Stable channel"
           currentValue={channel}
           thisValue={Channel.Stable}
@@ -47,7 +47,7 @@ const ChannelMenu: React.FC<ChannelMenuProps> = props => {
         >
           <Desc>Build using the Beta version: {betaVersion}</Desc>
           <Desc>({betaVersionDetails})</Desc>
-        </SelectOne>
+        </SelectOne> */}
         <SelectOne
           name="Nightly channel"
           currentValue={channel}

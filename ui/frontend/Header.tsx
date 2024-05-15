@@ -1,6 +1,6 @@
 import { useSDK } from '@metamask/sdk-react';
 import { Buffer } from 'buffer';
-import { MD5 } from 'crypto-js';
+import { MD5, enc } from 'crypto-js';
 import React, { RefObject, useCallback, useEffect, useRef } from 'react';
 
 import AdvancedOptionsMenu from './AdvancedOptionsMenu';
@@ -28,7 +28,6 @@ import { navigateToHelp } from './reducers/page';
 import * as selectors from './selectors';
 
 import styles from './Header.module.css';
-
 const Header: React.FC = () => {
   const menuContainer = useRef<HTMLDivElement | null>(null);
 
@@ -272,22 +271,34 @@ const UploadToNodeButton: React.FC = () => {
   const uploadWASMToNode = async () => {
     if (local_account && wasm.code) {
       try {
-        const message = wasm.code;
-        const hexMessage = '0x' + Buffer.from(message, 'utf8').toString('hex');
+	const image = wasm.code;
+        console.log(image)
+	
+	const data = enc.Base64.parse(image);
+	const image_md5 = MD5(data).toString(enc.Hex).toUpperCase();
+
+
+
+
+//        const wordArray = enc.Base64.parse(wasm.code);
+ //       const image_md5 = MD5(wordArray).toString(enc.Hex).toUpperCase();
+      	console.log(`image_md5: ${image_md5}`);
+        const message = image_md5.toString().toUpperCase(); 
         const sign = await provider?.request({
           method: 'personal_sign',
-          params: [hexMessage, local_account.address],
+          params: [message, local_account.address],
         });
         console.log(`sign: ${sign}`);
-        console.log(`wasm.code: ${wasm.code}`);
+        // console.log(`wasm.code: ${wasm.code}`);
         // const image = btoa(wasm.code + sign);
         // const image = btoa(`\0asm${wasm.code}`);
-        const image = wasm.code;
-        const image_md5 = MD5(image).toString().toUpperCase();
+       // const image_md5 = MD5(image).toString().toUpperCase();
         const payload = {
           jsonrpc: '2.0',
           method: 'rpc-add-new-image',
           params: {
+	    user_address: local_account.address,
+	    signature: sign,
             image: image,
             image_md5: image_md5,
           },

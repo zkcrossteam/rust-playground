@@ -16,7 +16,7 @@ export const routes = {
     gistSave: `${host}/meta/gist`,
     gistLoad: `${host}/meta/gist/id`,
   },
-  uploadWasm: `${node_host}`,
+  uploadWasm: `https://testrpc.zkcross.org`,
 };
 
 type FetchArg = Parameters<typeof fetch>[0];

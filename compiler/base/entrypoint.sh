@@ -3,7 +3,7 @@
 set -eu
 
 if [[ -z "${PLAYGROUND_ORCHESTRATOR:-}" ]]; then
-    timeout=${PLAYGROUND_TIMEOUT:-10}
+    timeout=${PLAYGROUND_TIMEOUT:-100}
 
     modify-cargo-toml
 

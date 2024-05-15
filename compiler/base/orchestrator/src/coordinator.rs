@@ -537,7 +537,7 @@ impl CargoTomlModifier for CompileRequest {
         }
 
         if CompileTarget::Wasm == self.target {
-            cargo_toml = modify_cargo_toml::remove_dependencies(cargo_toml);
+            //cargo_toml = modify_cargo_toml::remove_dependencies(cargo_toml);
             cargo_toml = modify_cargo_toml::set_release_lto(cargo_toml, true);
         }
 

@@ -64,7 +64,7 @@ export const performGistLoad = createAsyncThunk<
   const gistUrl = new URL(routes.meta.gistLoad, baseUrl);
   const u = new URL(id, gistUrl);
 
-  const d = await jsonGet(u);
+  const d = await jsonGet(u.toString());
   const gist = await GistResponseBody.parseAsync(d);
   return { ...gist, channel, mode, edition, stdout: '', stderr: '' };
 });

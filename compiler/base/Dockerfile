@@ -58,6 +58,12 @@ FROM toolchain as wasm-tools
 
 RUN cargo install wasm-tools
 
+RUN cargo install wasm-pack
+
+RUN cargo install wasm-bindgen-cli
+
+RUN cargo install wasm-opt
+
 # Fetch all the crate source files
 
 FROM toolchain as sources
@@ -79,7 +85,7 @@ RUN cargo build --release --manifest-path=/playground/modify-cargo-toml/Cargo.to
 
 FROM toolchain as chef-available
 
-RUN cargo install cargo-chef
+RUN cargo install cargo-chef wasm-bindgen-cli wasm-pack
 
 WORKDIR /orchestrator
 
@@ -119,6 +125,9 @@ RUN rm src/*.rs
 COPY --from=modify-cargo-toml /playground/modify-cargo-toml/target/release/modify-cargo-toml /playground/.cargo/bin
 COPY --from=build-orchestrator /playground/.cargo/bin/worker /playground/.cargo/bin/worker
 COPY --from=wasm-tools /playground/.cargo/bin/wasm-tools /playground/.cargo/bin
+COPY --from=wasm-tools /playground/.cargo/bin/wasm-pack /playground/.cargo/bin
+COPY --from=wasm-tools /playground/.cargo/bin/wasm-bindgen /playground/.cargo/bin
+COPY --from=wasm-tools /playground/.cargo/bin/wasm-opt /playground/.cargo/bin
 COPY --chown=playground cargo-wasm /playground/.cargo/bin
 COPY --chown=playground cargo-miri-playground /playground/.cargo/bin
 

@@ -79,7 +79,7 @@ const PRIMARY_ACTIONS: { [index in PrimaryAction]: () => ThunkAction } = {
   [PrimaryActionCore.LlvmIr]: performCompileToLlvmIrOnly,
   [PrimaryActionCore.Hir]: performCompileToHirOnly,
   [PrimaryActionCore.Mir]: performCompileToMirOnly,
-  [PrimaryActionCore.Wasm]: performCompileToWasmOnly,
+  [PrimaryActionCore.Wasm]: performCompileToCdylibWasmOnly,
 };
 
 export const performPrimaryAction = (): ThunkAction => (dispatch, getState) => {
@@ -138,7 +138,7 @@ export function indexPageLoad({
   edition?: string;
 }): ThunkAction {
   return function (dispatch) {
-    const channel = parseChannel(version) || Channel.Stable;
+    const channel = parseChannel(version) || Channel.Nightly;
     const mode = parseMode(modeString) || Mode.Release;
     let maybeEdition = parseEdition(editionString);
 

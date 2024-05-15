@@ -2,7 +2,7 @@
 
 set -euv -o pipefail
 
-channels_to_build="${CHANNELS_TO_BUILD-stable beta nightly}"
+channels_to_build="${CHANNELS_TO_BUILD-nightly}"
 
 repository=shepmaster
 

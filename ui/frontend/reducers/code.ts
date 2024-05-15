@@ -3,8 +3,26 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { performFormat } from './output/format';
 import { performGistLoad } from './output/gist';
 
-const initialState: string = `fn main() {
-    println!("Hello, world!");
+const initialState: string = `extern crate zkwasm_rust_sdk;
+use self::zkwasm_rust_sdk::{require, wasm_input};
+
+use wasm_bindgen::prelude::*;
+
+#[wasm_bindgen]
+pub unsafe fn zkexec(a: u64, b: u64) -> u64 {
+    a+b
+}
+
+#[wasm_bindgen]
+pub unsafe fn zkmain() -> u64 {
+    let a = wasm_input(1);
+    let b = wasm_input(1);
+
+    let c = wasm_input(0);
+
+    require(a+b == c);
+
+    0
 }`;
 
 const slice = createSlice({

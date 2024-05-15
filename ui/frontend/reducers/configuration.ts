@@ -54,7 +54,7 @@ const initialState: State = {
   processAssembly: ProcessAssembly.Filter,
   // primaryAction: PrimaryActionAuto.Auto,
   primaryAction: PrimaryActionCore.Wasm,
-  channel: Channel.Stable,
+  channel: Channel.Nightly,
   // mode: Mode.Debug,
   mode: Mode.Release,
   edition: Edition.Rust2021,
